@@ -1,0 +1,10 @@
+services:
+  redis:                                    # ชื่อ service (ตั้งเองได้)
+    image: docker.io/library/redis:7.4-alpine   # ใช้ Redis 7.4 (มี AOF แบบใหม่), alpine = image เล็ก
+    container_name: redis-lab               # ตั้งชื่อ container ให้เรียกง่าย
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]  # สั่งให้ redis อ่าน config ของเรา
+    ports:
+      - "6379:6379"                         # "พอร์ตบนเครื่องเรา : พอร์ตใน container"
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf:ro   # เอา config ของเรายัดเข้าไป (ro = read-only)
+      - ./data:/data                        # ผูกโฟลเดอร์ ./data (host) เข้ากับ /data (ใน container)

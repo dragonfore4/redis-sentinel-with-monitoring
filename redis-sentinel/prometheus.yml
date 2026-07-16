@@ -1,0 +1,37 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  # --- ส่อง data node (master + replica) ---
+  - job_name: redis
+    metrics_path: /scrape
+    static_configs:
+      - targets:
+        - redis-master:6379
+        - redis-replica-1:6379
+        - redis-replica-2:6379
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: redis-exporter:9121
+
+  # --- ส่อง sentinel (สุขภาพ HA) ---
+  - job_name: redis-sentinel
+    metrics_path: /scrape
+    static_configs:
+      - targets: [sentinel-1:26379, sentinel-2:26379, sentinel-3:26379]
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: redis-exporter:9121
+
+  # --- metric ของตัว exporter เอง ---
+  - job_name: redis-exporter
+    static_configs:
+      - targets: [redis-exporter:9121]
