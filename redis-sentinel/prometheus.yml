@@ -1,14 +1,21 @@
 global:
   scrape_interval: 5s
 
+# 10.247.60.97:16379,
+# 10.247.60.98:16380,
+# 10.247.60.99:16381
+
 scrape_configs:
   - job_name: redis
     metrics_path: /scrape
     static_configs:
       - targets:
-        - redis-master:6379
-        - redis-replica-1:6379
-        - redis-replica-2:6379
+        - 10.247.60.97:6379
+        - 10.247.60.98:6380
+        - 10.247.60.99:6381
+        labels:
+          cluster: redis-cluster
+          
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
@@ -20,7 +27,13 @@ scrape_configs:
   - job_name: redis-sentinel
     metrics_path: /scrape
     static_configs:
-      - targets: [sentinel-1:26379, sentinel-2:26379, sentinel-3:26379]
+      # - targets: [sentinel-1:26379, sentinel-2:26379, sentinel-3:26379]
+      - targets: 
+        - 10.247.60.97:16379
+        - 10.247.60.98:16380
+        - 10.247.60.99:16381
+        labels:
+          cluster: redis-cluster
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target

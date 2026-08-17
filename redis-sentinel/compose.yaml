@@ -6,71 +6,71 @@ networks:
         - subnet: 172.30.0.0/24        # ถ้าชนของเดิม เปลี่ยนเป็น 172.31.0.0/24
 
 services:
-  redis-master:
-    image: docker.io/library/redis:7.4-alpine
-    container_name: redis-master
-    command: ["redis-server", "/etc/redis/redis-real.conf"]
-    volumes: ["./redis-real.conf:/etc/redis/redis-real.conf:ro"]
-    ports: ["6379:6379"]
-    networks:
-      redisnet:
-        ipv4_address: 172.30.0.10       # หมุด IP ให้ master
+  # redis-master:
+  #   image: docker.io/library/redis:7.4-alpine
+  #   container_name: redis-master
+  #   command: ["redis-server", "/etc/redis/redis-real.conf"]
+  #   volumes: ["./redis-real.conf:/etc/redis/redis-real.conf:ro"]
+  #   ports: ["6379:6379"]
+  #   networks:
+  #     redisnet:
+  #       ipv4_address: 172.30.0.10       # หมุด IP ให้ master
 
-  redis-replica-1:
-    image: docker.io/library/redis:7.4-alpine
-    container_name: redis-replica-1
-    command: ["redis-server", "/etc/redis/replica.conf"]
-    volumes: 
-    - ./redis-real.conf:/etc/redis/redis-real.conf:ro
-    - ./replica.conf:/etc/redis/replica.conf:ro
-    ports: ["6380:6379"]
-    networks: [redisnet]
-    depends_on: [redis-master]
+  # redis-replica-1:
+  #   image: docker.io/library/redis:7.4-alpine
+  #   container_name: redis-replica-1
+  #   command: ["redis-server", "/etc/redis/replica.conf"]
+  #   volumes: 
+  #   - ./redis-real.conf:/etc/redis/redis-real.conf:ro
+  #   - ./replica.conf:/etc/redis/replica.conf:ro
+  #   ports: ["6380:6379"]
+  #   networks: [redisnet]
+  #   depends_on: [redis-master]
 
-  redis-replica-2:
-    image: docker.io/library/redis:7.4-alpine
-    container_name: redis-replica-2
-    command: ["redis-server", "/etc/redis/replica.conf"]
-    volumes: 
-    - ./redis-real.conf:/etc/redis/redis-real.conf:ro
-    - ./replica.conf:/etc/redis/replica.conf:ro
-    ports: ["6381:6379"]
-    networks: [redisnet]
-    depends_on: [redis-master]
+  # redis-replica-2:
+  #   image: docker.io/library/redis:7.4-alpine
+  #   container_name: redis-replica-2
+  #   command: ["redis-server", "/etc/redis/replica.conf"]
+  #   volumes: 
+  #   - ./redis-real.conf:/etc/redis/redis-real.conf:ro
+  #   - ./replica.conf:/etc/redis/replica.conf:ro
+  #   ports: ["6381:6379"]
+  #   networks: [redisnet]
+  #   depends_on: [redis-master]
 
-  sentinel-1:
-    image: docker.io/library/redis:7.4-alpine
-    container_name: sentinel-1
-    command: sh -c "cp /etc/redis/sentinel.conf /tmp/sentinel.conf && exec redis-sentinel /tmp/sentinel.conf"
-    ports: ["26379:26379"]
-    volumes: ["./sentinel.conf:/etc/redis/sentinel.conf:ro"]
-    networks: [redisnet]
-    depends_on: [redis-master, redis-replica-1, redis-replica-2]
+  # sentinel-1:
+  #   image: docker.io/library/redis:7.4-alpine
+  #   container_name: sentinel-1
+  #   command: sh -c "cp /etc/redis/sentinel.conf /tmp/sentinel.conf && exec redis-sentinel /tmp/sentinel.conf"
+  #   ports: ["26379:26379"]
+  #   volumes: ["./sentinel.conf:/etc/redis/sentinel.conf:ro"]
+  #   networks: [redisnet]
+  #   depends_on: [redis-master, redis-replica-1, redis-replica-2]
 
-  sentinel-2:
-    image: docker.io/library/redis:7.4-alpine
-    container_name: sentinel-2
-    command: sh -c "cp /etc/redis/sentinel.conf /tmp/sentinel.conf && exec redis-sentinel /tmp/sentinel.conf"
-    ports: ["26380:26379"]
-    volumes: ["./sentinel.conf:/etc/redis/sentinel.conf:ro"]
-    networks: [redisnet]
-    depends_on: [redis-master, redis-replica-1, redis-replica-2]
+  # sentinel-2:
+  #   image: docker.io/library/redis:7.4-alpine
+  #   container_name: sentinel-2
+  #   command: sh -c "cp /etc/redis/sentinel.conf /tmp/sentinel.conf && exec redis-sentinel /tmp/sentinel.conf"
+  #   ports: ["26380:26379"]
+  #   volumes: ["./sentinel.conf:/etc/redis/sentinel.conf:ro"]
+  #   networks: [redisnet]
+  #   depends_on: [redis-master, redis-replica-1, redis-replica-2]
 
-  sentinel-3:
-    image: docker.io/library/redis:7.4-alpine
-    container_name: sentinel-3
-    command: sh -c "cp /etc/redis/sentinel.conf /tmp/sentinel.conf && exec redis-sentinel /tmp/sentinel.conf"
-    ports: ["26381:26379"]
-    volumes: ["./sentinel.conf:/etc/redis/sentinel.conf:ro"]
-    networks: [redisnet]
-    depends_on: [redis-master, redis-replica-1, redis-replica-2]
+  # sentinel-3:
+  #   image: docker.io/library/redis:7.4-alpine
+  #   container_name: sentinel-3
+  #   command: sh -c "cp /etc/redis/sentinel.conf /tmp/sentinel.conf && exec redis-sentinel /tmp/sentinel.conf"
+  #   ports: ["26381:26379"]
+  #   volumes: ["./sentinel.conf:/etc/redis/sentinel.conf:ro"]
+  #   networks: [redisnet]
+  #   depends_on: [redis-master, redis-replica-1, redis-replica-2]
 
   redis-exporter:
-    image: docker.io/oliver006/redis_exporter:v1.62.0
+    image: docker.io/oliver006/redis_exporter:v1.89.0
     container_name: redis-exporter
     ports: ["9121:9121"]
     networks: [redisnet]
-    command: ["--redis.password=S3cret!"]
+    command: ["--redis.password=redis@"]
 
 
   prometheus:
