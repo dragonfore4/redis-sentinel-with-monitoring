@@ -9,7 +9,8 @@ services:
   redis-master:
     image: docker.io/library/redis:7.4-alpine
     container_name: redis-master
-    command: ["redis-server", "--port", "6379"]
+    command: ["redis-server", "/etc/redis/redis-real.conf"]
+    volumes: ["./redis-real.conf:/etc/redis/redis-real.conf:ro"]
     ports: ["6379:6379"]
     networks:
       redisnet:
@@ -18,7 +19,10 @@ services:
   redis-replica-1:
     image: docker.io/library/redis:7.4-alpine
     container_name: redis-replica-1
-    command: ["redis-server", "--port", "6379", "--replicaof", "172.30.0.10", "6379"]
+    command: ["redis-server", "/etc/redis/replica.conf"]
+    volumes: 
+    - ./redis-real.conf:/etc/redis/redis-real.conf:ro
+    - ./replica.conf:/etc/redis/replica.conf:ro
     ports: ["6380:6379"]
     networks: [redisnet]
     depends_on: [redis-master]
@@ -26,7 +30,10 @@ services:
   redis-replica-2:
     image: docker.io/library/redis:7.4-alpine
     container_name: redis-replica-2
-    command: ["redis-server", "--port", "6379", "--replicaof", "172.30.0.10", "6379"]
+    command: ["redis-server", "/etc/redis/replica.conf"]
+    volumes: 
+    - ./redis-real.conf:/etc/redis/redis-real.conf:ro
+    - ./replica.conf:/etc/redis/replica.conf:ro
     ports: ["6381:6379"]
     networks: [redisnet]
     depends_on: [redis-master]
@@ -63,6 +70,8 @@ services:
     container_name: redis-exporter
     ports: ["9121:9121"]
     networks: [redisnet]
+    command: ["--redis.password=S3cret!"]
+
 
   prometheus:
     image: docker.io/prom/prometheus:v2.53.1

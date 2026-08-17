@@ -2,7 +2,6 @@ global:
   scrape_interval: 5s
 
 scrape_configs:
-  # --- ส่อง data node (master + replica) ---
   - job_name: redis
     metrics_path: /scrape
     static_configs:
@@ -18,7 +17,6 @@ scrape_configs:
       - target_label: __address__
         replacement: redis-exporter:9121
 
-  # --- ส่อง sentinel (สุขภาพ HA) ---
   - job_name: redis-sentinel
     metrics_path: /scrape
     static_configs:
@@ -31,7 +29,6 @@ scrape_configs:
       - target_label: __address__
         replacement: redis-exporter:9121
 
-  # --- metric ของตัว exporter เอง ---
-  - job_name: redis-exporter
-    static_configs:
-      - targets: [redis-exporter:9121]
+  # - job_name: redis-exporter
+  #   static_configs:
+  #     - targets: [redis-exporter:9121]
